@@ -9,8 +9,8 @@ public class Player {
 	private int submarineHealth = 3;
 	private int destroyerHealth = 2;
 
-	private int currentXCord;
-	private int currentYCord;
+	private int currentCol;
+	private int currentRow;
 
 	private final String name;
 
@@ -38,26 +38,22 @@ public class Player {
 		return board;
 	}
 
-	public String getHiddenBoard() {
-		return getBoard().toString().replaceAll("S", "W");
-	}
-
-	public boolean placeShip(String shipName, int xcord, int ycord, int shipDirection) {
+	public boolean placeShip(String shipName, int col, int row, int shipDirection) {
 		int shipIndex = -1;
 		switch (shipName) {
-		case "Carrier":
+		case "CARRIER":
 			shipIndex = 0;
 			break;
-		case "Battleship":
+		case "BATTLESHIP":
 			shipIndex = 1;
 			break;
-		case "Cruiser":
+		case "CRUISER":
 			shipIndex = 2;
 			break;
-		case "Submarine":
+		case "SUBMARINE":
 			shipIndex = 3;
 			break;
-		case "Destroyer":
+		case "DESTROYER":
 			shipIndex = 4;
 			break;
 		default:
@@ -65,11 +61,11 @@ public class Player {
 		}
 
 		boolean shipsPlaced = false;
-		currentXCord = xcord;
-		currentYCord = ycord;
+		currentCol = col;
+		currentRow = row;
 		if (checkShipTiles(shipIndex, shipDirection)) {
-			currentXCord = xcord;
-			currentYCord = ycord;
+			currentCol = col;
+			currentRow = row;
 			setShipTiles(shipIndex, shipDirection);
 			shipsPlaced = true;
 		} else {
@@ -121,8 +117,8 @@ public class Player {
 	private void setShipTiles(int shipIndex, int shipDirection) {
 		int tilesToPlace = Ship.values()[shipIndex].getSize();
 		for (int i = 0; i < tilesToPlace; i++) {
-			board.setTileType(currentXCord, currentYCord, Type.S);
-			board.setShipType(currentXCord, currentYCord, shipIndex);
+			board.setTileType(currentCol, currentRow, Type.S);
+			board.setShipType(currentCol, currentRow, shipIndex);
 			nextCords(shipDirection);
 		}
 	}
@@ -131,8 +127,8 @@ public class Player {
 		boolean tilesOpen = false;
 		int tilesToCheck = Ship.values()[shipIndex].getSize();
 		for (int i = 0; i < tilesToCheck; i++) {
-			if ((currentXCord < 10 && currentXCord >= 0) && (currentYCord < 10 && currentYCord >= 0)) {
-				if (board.getTileValue(currentXCord, currentYCord) == Type.W) {
+			if ((currentCol < 10 && currentCol >= 0) && (currentRow < 10 && currentRow >= 0)) {
+				if (board.getTileValue(currentCol, currentRow) == Type.W) {
 					tilesOpen = true;
 				} else {
 					tilesOpen = false;
@@ -151,16 +147,10 @@ public class Player {
 	private void nextCords(int shipDirection) {
 		switch (shipDirection) {
 		case 1:
-			currentYCord += 1;
+			currentCol += 1;
 			break;
 		case 2:
-			currentYCord -= 1;
-			break;
-		case 3:
-			currentXCord -= 1;
-			break;
-		case 4:
-			currentXCord += 1;
+			currentRow += 1;
 			break;
 		}
 	}
