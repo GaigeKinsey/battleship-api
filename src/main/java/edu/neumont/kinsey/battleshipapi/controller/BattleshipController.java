@@ -2,6 +2,7 @@ package edu.neumont.kinsey.battleshipapi.controller;
 
 import edu.neumont.kinsey.battleshipapi.model.Player;
 import edu.neumont.kinsey.battleshipapi.model.Ship;
+import edu.neumont.kinsey.battleshipapi.model.Type;
 import edu.neumont.kinsey.battleshipapi.view.BattleshipView;
 import javafx.scene.control.RadioButton;
 
@@ -34,7 +35,7 @@ public class BattleshipController {
 	}
 
 	public void turnSwitcher() {
-		view.alertTurnSwitch();
+		this.view.turnSwitch();
 		switch (turn) {
 		case 0:
 			currentPlayer = players[1];
@@ -49,12 +50,30 @@ public class BattleshipController {
 		}
 	}
 
-	public void attack(int row, int col) {
-		// TODO
+	public void attack(int col, int row) {
+		boolean valid = false;
+		if (otherPlayer.getBoard().getTileValue(col, row) == Type.S) {
+			otherPlayer.recieveHit(otherPlayer.getBoard().getShipType(col, row));
+			otherPlayer.getBoard().setTileType(col, row, Type.X);
+			valid = true;
+			view.alertHit();
+		} else if (otherPlayer.getBoard().getTileValue(col, row) == Type.W) {
+			otherPlayer.getBoard().setTileType(col, row, Type.O);
+			valid = true;
+			view.alertMiss();
+		} else {
+			view.alertInvalidAttack();
+		}
+		if (valid) {
+			turnSwitcher();
+		}
+		view.updateBoards();
+		if (currentPlayer.isDead()) {
+			this.playerWon();
+		}
 	}
 
-	public void placeShip(int row, int col, RadioButton direction) {
-		// TODO
+	public void placeShip(int col, int row, RadioButton direction) {
 		boolean shipPlaced = false;
 		int shipDirection = 0;
 		if (direction.getText().equals("Right")) {
@@ -64,19 +83,19 @@ public class BattleshipController {
 		}
 		switch (shipsPlaced) {
 		case 0:
-			shipPlaced = currentPlayer.placeShip(Ship.CARRIER.toString(), row, col, shipDirection);
+			shipPlaced = currentPlayer.placeShip(Ship.CARRIER.toString(), col, row, shipDirection);
 			break;
 		case 1:
-			shipPlaced = currentPlayer.placeShip(Ship.BATTLESHIP.toString(), row, col, shipDirection);
+			shipPlaced = currentPlayer.placeShip(Ship.BATTLESHIP.toString(), col, row, shipDirection);
 			break;
 		case 2:
-			shipPlaced = currentPlayer.placeShip(Ship.CRUISER.toString(), row, col, shipDirection);
+			shipPlaced = currentPlayer.placeShip(Ship.CRUISER.toString(), col, row, shipDirection);
 			break;
 		case 3:
-			shipPlaced = currentPlayer.placeShip(Ship.SUBMARINE.toString(), row, col, shipDirection);
+			shipPlaced = currentPlayer.placeShip(Ship.SUBMARINE.toString(), col, row, shipDirection);
 			break;
 		case 4:
-			shipPlaced = currentPlayer.placeShip(Ship.DESTROYER.toString(), row, col, shipDirection);
+			shipPlaced = currentPlayer.placeShip(Ship.DESTROYER.toString(), col, row, shipDirection);
 		}
 		if (shipPlaced) {
 			shipsPlaced++;
@@ -85,13 +104,31 @@ public class BattleshipController {
 				shipTurnsPassed++;
 				shipsPlaced = 0;
 			}
-			view.updateBoards(currentPlayer.getBoard(), otherPlayer.getBoard());
 			if (shipTurnsPassed > 1) {
 				view.swapToAttacking();
 			}
+			view.updateBoards();
 		} else {
 			view.alertInvalidPlacement();
 		}
+	}
+
+	private void playerWon() {
+		if (view.askForShutdown()) {
+			this.reset();
+		} else {
+			view.shutdown();
+		}
+	}
+
+	public void reset() {
+		players = new Player[2];
+		turn = 0;
+		currentPlayer = null;
+		otherPlayer = null;
+		shipsPlaced = 0;
+		shipTurnsPassed = 0;
+		view.reset();
 	}
 
 	public Player getCurrentPlayer() {

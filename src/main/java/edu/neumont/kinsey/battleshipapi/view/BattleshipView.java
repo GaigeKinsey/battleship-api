@@ -1,7 +1,6 @@
 package edu.neumont.kinsey.battleshipapi.view;
 
 import edu.neumont.kinsey.battleshipapi.controller.BattleshipController;
-import edu.neumont.kinsey.battleshipapi.model.Board;
 
 public interface BattleshipView {
 
@@ -9,14 +8,24 @@ public interface BattleshipView {
 
 	void init();
 	
-	void updateBoards(Board ownBoard, Board otherBoard);
+	void updateBoards();
 
-	void alertTurnSwitch();
-
-	void updateButtonEventHandlers();
+	void turnSwitch();
 
 	void alertInvalidPlacement();
 
 	void swapToAttacking();
+
+	void alertHit();
+
+	void alertMiss();
+
+	void alertInvalidAttack();
+	
+	void shutdown();
+
+	boolean askForShutdown();
+
+	void reset();
 
 }
