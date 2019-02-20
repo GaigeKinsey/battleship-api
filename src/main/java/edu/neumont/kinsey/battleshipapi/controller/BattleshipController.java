@@ -110,6 +110,23 @@ public class BattleshipController {
 				view.swapToAttacking();
 			}
 			view.updateBoards();
+			switch (shipsPlaced) {
+			case 0:
+				view.updateShipSize(5);
+				break;
+			case 1:
+				view.updateShipSize(4);
+				break;
+			case 2:
+				view.updateShipSize(3);
+				break;
+			case 3:
+				view.updateShipSize(3);
+				break;
+			case 4:
+				view.updateShipSize(2);
+				break;
+			}
 		} else {
 			view.alertInvalidPlacement();
 		}

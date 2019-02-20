@@ -30,4 +30,6 @@ public interface BattleshipView {
 
 	void alertShipSunk(String shipType);
 
+	void updateShipSize(int size);
+
 }
