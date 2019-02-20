@@ -53,7 +53,9 @@ public class BattleshipController {
 	public void attack(int col, int row) {
 		boolean valid = false;
 		if (otherPlayer.getBoard().getTileValue(col, row) == Type.S) {
-			otherPlayer.recieveHit(otherPlayer.getBoard().getShipType(col, row));
+			if (otherPlayer.recieveHit(otherPlayer.getBoard().getShipType(col, row))) {
+				view.alertShipSunk(otherPlayer.getBoard().getShipType(col, row));
+			}
 			otherPlayer.getBoard().setTileType(col, row, Type.X);
 			valid = true;
 			view.alertHit();

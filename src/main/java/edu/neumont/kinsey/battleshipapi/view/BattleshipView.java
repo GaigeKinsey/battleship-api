@@ -28,4 +28,6 @@ public interface BattleshipView {
 
 	void reset();
 
+	void alertShipSunk(String shipType);
+
 }
